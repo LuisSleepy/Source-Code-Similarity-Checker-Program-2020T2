@@ -23,7 +23,6 @@ public class Controller {
     public Button checkButton;
 
     public File file;
-    public GridPane matrix;
     public ScrollPane scrollPane;
 
 
@@ -35,7 +34,7 @@ public class Controller {
 
 
     public void checkOnAction(ActionEvent actionEvent) throws IOException {
-        scrollPane.setVisible(true);
+        GridPane matrix = new GridPane();
         String[] files = file.list();
         assert files != null;
 
