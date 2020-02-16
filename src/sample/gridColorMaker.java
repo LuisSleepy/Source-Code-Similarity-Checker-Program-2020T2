@@ -5,11 +5,12 @@ import javafx.scene.shape.Rectangle;
 
 public class gridColorMaker {
     public Rectangle checkColor(float value) {
+        // Creates a rectangle with a specified width and height
         Rectangle scoreRectangle = new Rectangle();
-
         scoreRectangle.setWidth(100);
         scoreRectangle.setHeight(50);
 
+        // Assigns a color for the rectangle based on the specified score
         if (value >= 0 && value <= 0.10) {
             scoreRectangle.setFill(Color.BLUE);
         } else if (value > 0.10 && value <= 0.20) {

@@ -35,31 +35,31 @@ public class Controller {
 
 
     public void checkOnAction(ActionEvent actionEvent) throws IOException {
+        // Initializes the matrix
         GridPane matrix = new GridPane();
-        scrollPane.setContent(matrix);
-        Rectangle coloredScore;
-        gridColorMaker gcm = new gridColorMaker();
-
         matrix.setVgap(10);
         matrix.setHgap(10);
 
+        // Sets up matrix as a content of the scrollPane
+        scrollPane.setContent(matrix);
+
+        // Stores the names of the files currently handled by "file"
         String[] files = file.list();
         assert files != null;
 
-        similarityChecker sc = new similarityChecker();
-
         // Create a loop for reading the files
-
         ArrayList<String> projFiles = new ArrayList<>();
-
         for (String s : files) {
             projFiles.add(file.getAbsolutePath() + '\\' + s);
         }
 
+        // Provides the dimensions of the array that will store the similarity scores
         int rows = files.length;
         int cols = files.length;
         float[][] scores = new float[cols][rows];
 
+        similarityChecker sc = new similarityChecker();
+        // Puts a file on hold and compare it to the rest of the files, also with itself
         for (int x = 0; x < projFiles.size(); x++) {
             for (int y = 0; y < projFiles.size(); y++) {
                 String proj1 = projFiles.get(x);
@@ -76,11 +76,14 @@ public class Controller {
             }
             System.out.print("\n");
         }
+
+        // Instantiates gridColorMaker
+        gridColorMaker gcm = new gridColorMaker();
         for (int x = 0; x < projFiles.size(); x++) {
             for (int y = 0; y < projFiles.size(); y++) {
-                String text = String.format("%.2f", scores[x][y]);
-                Label label = new Label(text);
-                coloredScore = gcm.checkColor(scores[x][y]);
+                // Creates a colored rectangle using the checkColor method of gridColorMaker
+                Rectangle coloredScore = gcm.checkColor(scores[x][y]);
+                // Adds the rectangle in a to-be-created cell of the gridPane
                 matrix.add(coloredScore, x, y);
             }
         }
