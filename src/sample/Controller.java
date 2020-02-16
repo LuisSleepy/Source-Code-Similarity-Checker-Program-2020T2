@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
@@ -22,7 +23,8 @@ public class Controller {
 
     public File file;
     public ScrollPane scrollPane;
-
+    public GridPane matrix;
+    public ArrayList<scoreChecker> scoreCheckers = new ArrayList<>();
 
     public void searchOnAction(ActionEvent actionEvent) {
         Stage resourceStage = new Stage();
@@ -39,7 +41,7 @@ public class Controller {
         String[] files = file.list();
         assert files != null;
 
-        GridPane matrix = gcm.gridPaneMaker(10, 10, files);
+        matrix = gcm.gridPaneMaker(10, 10, files);
 
         // Provides the dimensions of the array that will store the similarity scores
         int rows = files.length;
@@ -79,6 +81,11 @@ public class Controller {
                 Rectangle coloredScore = gcm.checkColor(scores[x][y]);
                 // Adds the rectangle in a to-be-created cell of the gridPane
                 matrix.add(coloredScore, x + 1, y + 1);
+                scoreChecker checker = new scoreChecker(coloredScore.getX(), coloredScore.getX()
+                + coloredScore.getWidth(), coloredScore.getY(), coloredScore.getY() + coloredScore.getHeight()
+                , scores[x][y]);
+                scoreCheckers.add(checker);
+
             }
         }
 
@@ -86,4 +93,10 @@ public class Controller {
         scrollPane.setContent(matrix);
     }
 
+    public void showScore(MouseEvent mouseEvent) {
+        System.out.println(mouseEvent.getX());
+        System.out.println(mouseEvent.getY());
+
+
+    }
 }
