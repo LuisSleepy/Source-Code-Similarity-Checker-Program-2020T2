@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -35,6 +36,13 @@ public class Controller {
 
     public void checkOnAction(ActionEvent actionEvent) throws IOException {
         GridPane matrix = new GridPane();
+        scrollPane.setContent(matrix);
+        Rectangle coloredScore;
+        gridColorMaker gcm = new gridColorMaker();
+
+        matrix.setVgap(10);
+        matrix.setHgap(10);
+
         String[] files = file.list();
         assert files != null;
 
@@ -68,12 +76,12 @@ public class Controller {
             }
             System.out.print("\n");
         }
-        matrix.setGridLinesVisible(true);
         for (int x = 0; x < projFiles.size(); x++) {
             for (int y = 0; y < projFiles.size(); y++) {
                 String text = String.format("%.2f", scores[x][y]);
                 Label label = new Label(text);
-                matrix.add(label, x, y);
+                coloredScore = gcm.checkColor(scores[x][y]);
+                matrix.add(coloredScore, x, y);
             }
         }
     }
