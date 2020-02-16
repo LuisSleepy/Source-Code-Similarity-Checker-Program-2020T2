@@ -30,14 +30,17 @@ public class Controller {
         Stage resourceStage = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         file = directoryChooser.showDialog(resourceStage);
-        folderTextField.setText(file.toString());
+        folderTextField.setText(file.getName());
     }
 
 
     public void checkOnAction(ActionEvent actionEvent) throws IOException {
+        if(file == null){
+            folderTextField.setText("No File Directory Chosen");
+            return;
+        }
         gridColorMaker gcm = new gridColorMaker();
         // Initializes the matrix
-
         // Stores the names of the files currently handled by "file"
         String[] files = file.list();
         assert files != null;
@@ -65,13 +68,13 @@ public class Controller {
                 File code2 = new File(proj2);
                 try {
                     float simScore = sc.check(code1, code2);
-                    System.out.print(String.format("%.2f", simScore) + "\t");
+                    //System.out.print(String.format("%.2f", simScore) + "\t");
                     scores[x][y] = simScore;
                 } catch (IOException io) {
                     io.printStackTrace();
                 }
             }
-            System.out.print("\n");
+            //System.out.print("\n");
         }
 
         // Instantiates gridColorMaker
@@ -82,29 +85,19 @@ public class Controller {
                 Rectangle coloredScore = gcm.checkColor(scores[x][y]);
                 // Adds the rectangle in a to-be-created cell of the gridPane
                 matrix.add(coloredScore, x + 1, y + 1);
-                scoreChecker checker = new scoreChecker(coloredScore.getX(), coloredScore.getX() + coloredScore.getWidth(), coloredScore.getY(), coloredScore.getY() + coloredScore.getY() + coloredScore.getHeight(), scores[x][y], x + 1, y + 1);
-                scoreCheckers.add(checker);
+                //scoreChecker checker = new scoreChecker(coloredScore.getX(), coloredScore.getX() + coloredScore.getWidth(), coloredScore.getY(), coloredScore.getY() + coloredScore.getHeight(), scores[x][y]);
+                //scoreCheckers.add(checker);
 
             }
         }
-
         // Sets up matrix as a content of the scrollPane
         scrollPane.setContent(matrix);
     }
 
-    /* Work in progress!!!
     public void showScore(MouseEvent mouseEvent) {
-        for (sample.scoreChecker scoreChecker : scoreCheckers) {
-            //System.out.println(scoreChecker.xPosLeft);
-           // System.out.println(scoreChecker.xPosRight);
-            /*
-            if (mouseEvent.getY() <= scoreChecker.yPosBot) {
-                String scoreString = String.valueOf(scoreChecker.score);
-                Label scoreLabel = new Label(scoreString);
-                matrix.add(scoreLabel, scoreChecker.column, scoreChecker.row);
-                System.out.println(mouseEvent.getX());
-                System.out.println(mouseEvent.getY());
-                break;
-            }
-             */
+        System.out.println(mouseEvent.getX());
+        System.out.println(mouseEvent.getY());
+
+
+    }
 }
