@@ -17,17 +17,17 @@ public class similarityChecker {
         while ((line1 != null)&&(line2 != null)){
             String[] words1 = line1.split("\\s+");
             String[] words2 = line2.split("\\s+");
-            for(int i=0; i< words1.length; i++){
-                for(int j=0; j< words2.length; j++){
-                    if(words1[i].equals(words2[j])){
+            for (String item : words1) {
+                for (String s : words2) {
+                    if (item.equals(s)) {
                         sim1++;
                     }
                 }
                 total1++;
             }
-            for(int i=0; i< words2.length; i++){
-                for(int j=0; j< words1.length; j++){
-                    if(words2[i].equals(words1[j])){
+            for (String s : words2) {
+                for (String value : words1) {
+                    if (s.equals(value)) {
                         sim2++;
                     }
                 }
