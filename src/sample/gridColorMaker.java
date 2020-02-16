@@ -1,9 +1,39 @@
 package sample;
 
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class gridColorMaker {
+    public GridPane gridPaneMaker(double vGap, double hGap, String[] names) {
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(vGap);
+        gridPane.setHgap(hGap);
+
+        for (int i = 0; i < names.length; i++) {
+            Label text = new Label(names[i]);
+            text.setFont(Font.font("Georgia", 12));
+            GridPane.setHalignment(text, HPos.CENTER);
+            gridPane.add(text, i + 1, 0);
+        }
+
+        for (int i = 0; i < names.length; i++) {
+            Label text = new Label(names[i]);
+            text.setFont(Font.font("Georgia", 12));
+            GridPane.setHalignment(text, HPos.CENTER);
+            gridPane.add(text, 0, i + 1);
+        }
+        return gridPane;
+
+    }
     public Rectangle checkColor(float value) {
         // Creates a rectangle with a specified width and height
         Rectangle scoreRectangle = new Rectangle();
