@@ -1,16 +1,11 @@
 package sample;
 
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 public class gridColorMaker {
     public GridPane gridPaneMaker(double vGap, double hGap, String[] names) {

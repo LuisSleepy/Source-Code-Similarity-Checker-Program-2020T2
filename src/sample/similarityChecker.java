@@ -9,8 +9,8 @@ public class similarityChecker {
     public float check(File address1, File address2) throws IOException {
         BufferedReader reader1 = new BufferedReader(new FileReader(address1));
         BufferedReader reader2 = new BufferedReader(new FileReader(address2));
-        float total=0, total1=0, total2=0;
-        float sim1=0, sim2=0, sim=0;
+        float total, total1=0, total2=0;
+        float sim1=0, sim2=0, sim;
         String line1 = reader1.readLine();
         String line2 = reader2.readLine();
 
