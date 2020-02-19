@@ -1,4 +1,4 @@
-package sample;
+package softwareSimilarityChecker;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
@@ -7,31 +7,132 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.scene.image.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class Controller {
-
-    public TextField folderTextField;
-    public Button searchButton;
-    public Button checkButton;
-    public Label scoreLabel = new Label();
-
-    public File file;
+    private Stage stage;
+    // Panes
     public ScrollPane scrollPane;
+    public AnchorPane mainMenuPane;
     public GridPane matrix;
+
+    // Shapes
+    public Circle circleGIF;
+
+    // Containers
+    public TextField folderTextField;
+    public Label scoreLabel = new Label();
     public ArrayList<scoreChecker> scoreCheckers = new ArrayList<>();
 
-    public void searchOnAction(ActionEvent actionEvent) {
+    // Buttons
+    public Button startButton;
+    public Button aboutButton;
+    public Button exitButton;
+    public Button searchButton;
+    public Button continueButton;
+    public Button backToMainMenuButton;
+    public Button checkerButton;
+    public Button metricsButton;
+    public Button backToSearchMenuButton;
+
+    // Others
+    public File file;
+
+    public void initialize() throws URISyntaxException {
+        File codingFile = new File("assets/coding.gif");
+        Image codingImage = new Image(codingFile.toURI().toString(), false);
+        circleGIF.setFill(new ImagePattern(codingImage));
+    }
+
+    public void initStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void setStartButton() {
+        // Remove buttons from the main menu
+        startButton.setVisible(false);
+        aboutButton.setVisible(false);
+        exitButton.setVisible(false);
+
+        folderTextField.setVisible(true);
+        searchButton.setVisible(true);
+        continueButton.setVisible(true);
+        continueButton.setDisable(true);
+        backToMainMenuButton.setVisible(true);
+    }
+
+    public void setAboutButton() {
+        startButton.setVisible(false);
+        aboutButton.setVisible(false);
+        exitButton.setVisible(false);
+    }
+
+    public void setExitButton() {
+        stage.close();
+    }
+
+    public void setSearchButton(ActionEvent actionEvent) {
         Stage resourceStage = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         file = directoryChooser.showDialog(resourceStage);
         folderTextField.setText(file.toString());
+
+        if (folderTextField.getText() != null) {
+            continueButton.setDisable(false);
+        }
+    }
+
+    public void setContinueButton(ActionEvent actionEvent) {
+        folderTextField.setVisible(false);
+        searchButton.setVisible(false);
+        continueButton.setVisible(false);
+        backToMainMenuButton.setVisible(false);
+
+        checkerButton.setVisible(true);
+        metricsButton.setVisible(true);
+        backToSearchMenuButton.setVisible(true);
+    }
+
+    public void setBackToMainMenuButton(ActionEvent actionEvent) {
+        folderTextField.clear();
+
+        folderTextField.setVisible(false);
+        searchButton.setVisible(false);
+        continueButton.setVisible(false);
+        backToMainMenuButton.setVisible(false);
+
+        startButton.setVisible(true);
+        aboutButton.setVisible(true);
+        exitButton.setVisible(true);
+    }
+
+    public void setCheckerButton(ActionEvent actionEvent) {
+    }
+
+    public void setMetricsButton(ActionEvent actionEvent) {
+    }
+
+    public void setBackToSearchMenuButton(ActionEvent actionEvent) {
+        checkerButton.setVisible(false);
+        metricsButton.setVisible(false);
+        backToSearchMenuButton.setVisible(false);
+
+        folderTextField.clear();
+        folderTextField.setVisible(true);
+        searchButton.setVisible(true);
+        continueButton.setVisible(true);
+        continueButton.setDisable(true);
+        backToMainMenuButton.setVisible(true);
     }
 
 
@@ -46,7 +147,7 @@ public class Controller {
             String[] files = file.list();
             assert files != null;
 
-            matrix = gcm.gridPaneMaker(10, 10, files);
+            matrix = gcm.gridPaneMaker(5, 5, files);
 
             // Provides the dimensions of the array that will store the similarity scores
             int rows = files.length;
@@ -83,7 +184,7 @@ public class Controller {
             for (int x = 0; x < projFiles.size(); x++) {
                 for (int y = 0; y < projFiles.size(); y++) {
                     // Creates a colored rectangle using the checkColor method of gridColorMaker
-                    Rectangle coloredScore = gcm.checkColor(scores[x][y]);
+                    StackPane coloredScore = gcm.checkColor(scores[x][y]);
                     // Adds the rectangle in a to-be-created cell of the gridPane
                     matrix.add(coloredScore, x + 1, y + 1);
                     scoreChecker checker = new scoreChecker(scores[x][y], x + 1, y + 1);
@@ -101,7 +202,7 @@ public class Controller {
     public void showScore(MouseEvent mouseEvent) throws IllegalArgumentException {
         System.out.println(GridPane.getColumnIndex(mouseEvent.getPickResult().getIntersectedNode()));
         System.out.println(GridPane.getRowIndex(mouseEvent.getPickResult().getIntersectedNode()));
-        for (sample.scoreChecker scoreChecker : scoreCheckers) {
+        for (softwareSimilarityChecker.scoreChecker scoreChecker : scoreCheckers) {
             scoreLabel.setText("");
             if (GridPane.getColumnIndex(mouseEvent.getPickResult().getIntersectedNode()) == scoreChecker.column &&
                     GridPane.getRowIndex(mouseEvent.getPickResult().getIntersectedNode()) == scoreChecker.row) {

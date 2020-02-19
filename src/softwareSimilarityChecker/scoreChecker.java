@@ -1,4 +1,4 @@
-package sample;
+package softwareSimilarityChecker;
 
 public class scoreChecker {
     public double score;
