@@ -48,7 +48,7 @@ public class Controller {
     // Others
     public File file;
 
-    public void initialize() throws URISyntaxException {
+    public void initialize() {
         File codingFile = new File("assets/coding.gif");
         Image codingImage = new Image(codingFile.toURI().toString(), false);
         circleGIF.setFill(new ImagePattern(codingImage));
