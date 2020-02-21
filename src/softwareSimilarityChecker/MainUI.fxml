@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="mainMenuPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="softwareSimilarityChecker.Controller">
+<AnchorPane fx:id="mainMenuPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="softwareSimilarityChecker.mainController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#76dfe4" height="565.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="465.0" />
       <Ellipse fill="#c4c4c4" layoutX="225.0" layoutY="101.0" radiusX="303.0" radiusY="183.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />

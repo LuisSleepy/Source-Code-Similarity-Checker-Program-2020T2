@@ -112,7 +112,7 @@ class SMetric {
 
             int operatorCount = 0, operandCount = 0;
             boolean skipFlag = false;
-            BufferedReader reader = new BufferedReader(new FileReader(new File("C:\\Users\\Admin\\Documents\\DLSU - 2nd Year\\2nd Term\\LBYCPD2\\SimilaritySoftware-Antoc-Vicente\\src\\sample\\Controller.java")));
+            BufferedReader reader = new BufferedReader(new FileReader(new File("C:\\Users\\Admin\\Documents\\DLSU - 2nd Year\\2nd Term\\LBYCPD2\\SimilaritySoftware-Antoc-Vicente\\src\\sample\\mainController.java")));
             String line;
 
             while((line = reader.readLine()) != null)

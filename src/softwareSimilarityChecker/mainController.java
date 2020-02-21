@@ -1,6 +1,9 @@
 package softwareSimilarityChecker;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -19,12 +22,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class Controller {
+public class mainController {
     private Stage stage;
     // Panes
     public ScrollPane scrollPane;
     public AnchorPane mainMenuPane;
-    public GridPane matrix;
+    //public GridPane matrix;
 
     // Shapes
     public Circle circleGIF;
@@ -32,7 +35,6 @@ public class Controller {
     // Containers
     public TextField folderTextField;
     public Label scoreLabel = new Label();
-    public ArrayList<scoreChecker> scoreCheckers = new ArrayList<>();
 
     // Buttons
     public Button startButton;
@@ -116,7 +118,23 @@ public class Controller {
         exitButton.setVisible(true);
     }
 
-    public void setCheckerButton(ActionEvent actionEvent) {
+    public void setCheckerButton(ActionEvent actionEvent) throws IOException {
+        checkerButton.setVisible(false);
+        metricsButton.setVisible(false);
+        backToSearchMenuButton.setVisible(false);
+
+        stage.close();
+        Stage matrixStage = new Stage();
+        FXMLLoader matrixLoader = new FXMLLoader();
+        matrixLoader.setLocation(getClass().getResource("MatrixUI.fxml"));
+        Parent matrixRoot = matrixLoader.load();
+        matrixController controller = matrixLoader.getController();
+        controller.setData(folderTextField, file);
+        Scene parentRoot = new Scene(matrixRoot);
+        matrixStage.setTitle("Similarity Matrix");
+        matrixStage.setResizable(false);
+        matrixStage.setScene(parentRoot);
+        matrixStage.show();
     }
 
     public void setMetricsButton(ActionEvent actionEvent) {
@@ -135,70 +153,7 @@ public class Controller {
         backToMainMenuButton.setVisible(true);
     }
 
-
-    public void checkOnAction(ActionEvent actionEvent) throws IOException {
-        if (file == null) {
-            folderTextField.setText("No File Directory Chosen");
-        } else {
-            gridColorMaker gcm = new gridColorMaker();
-            // Initializes the matrix
-
-            // Stores the names of the files currently handled by "file"
-            String[] files = file.list();
-            assert files != null;
-
-            matrix = gcm.gridPaneMaker(5, 5, files);
-
-            // Provides the dimensions of the array that will store the similarity scores
-            int rows = files.length;
-            int cols = files.length;
-            float[][] scores = new float[cols][rows];
-
-            // Create a loop for reading the files
-            ArrayList<String> projFiles = new ArrayList<>();
-            for (String s : files) {
-                projFiles.add(file.getAbsolutePath() + '\\' + s);
-            }
-
-            similarityChecker sc = new similarityChecker();
-            // Puts a file on hold and compare it to the rest of the files, also with itself
-            for (int x = 0; x < projFiles.size(); x++) {
-                for (int y = 0; y < projFiles.size(); y++) {
-                    String proj1 = projFiles.get(x);
-                    String proj2 = projFiles.get(y);
-                    File code1 = new File(proj1);
-                    File code2 = new File(proj2);
-                    try {
-                        float simScore = sc.check(code1, code2);
-                        System.out.print(String.format("%.2f", simScore) + "\t");
-                        scores[x][y] = simScore;
-                    } catch (IOException io) {
-                        io.printStackTrace();
-                    }
-                }
-                System.out.print("\n");
-            }
-
-            // Instantiates gridColorMaker
-
-            for (int x = 0; x < projFiles.size(); x++) {
-                for (int y = 0; y < projFiles.size(); y++) {
-                    // Creates a colored rectangle using the checkColor method of gridColorMaker
-                    StackPane coloredScore = gcm.checkColor(scores[x][y]);
-                    // Adds the rectangle in a to-be-created cell of the gridPane
-                    matrix.add(coloredScore, x + 1, y + 1);
-                    scoreChecker checker = new scoreChecker(scores[x][y], x + 1, y + 1);
-                    scoreCheckers.add(checker);
-
-                }
-            }
-
-            // Sets up matrix as a content of the scrollPane
-            scrollPane.setContent(matrix);
-        }
-
-    }
-
+    /*
     public void showScore(MouseEvent mouseEvent) throws IllegalArgumentException {
         System.out.println(GridPane.getColumnIndex(mouseEvent.getPickResult().getIntersectedNode()));
         System.out.println(GridPane.getRowIndex(mouseEvent.getPickResult().getIntersectedNode()));
@@ -215,4 +170,6 @@ public class Controller {
             }
         }
     }
+
+     */
 }

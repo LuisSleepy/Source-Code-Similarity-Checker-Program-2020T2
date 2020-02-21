@@ -1,6 +1,7 @@
 package softwareSimilarityChecker;
 
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -16,20 +17,16 @@ public class gridColorMaker {
         gridPane.setHgap(hGap);
 
         for (int i = 0; i < names.length; i++) {
-            Label text = new Label(names[i]);
+            Label text = new Label(String.valueOf(i + 1));
             text.setFont(Font.font("Georgia", 12));
             GridPane.setHalignment(text, HPos.CENTER);
-            text.setMaxWidth(50);
-            text.setMaxHeight(25);
             gridPane.add(text, i + 1, 0);
         }
 
         for (int i = 0; i < names.length; i++) {
-            Label text = new Label(names[i]);
+            Label text = new Label(String.valueOf(i + 1));
             text.setFont(Font.font("Georgia", 12));
             GridPane.setHalignment(text, HPos.CENTER);
-            text.setMaxWidth(50);
-            text.setMaxHeight(25);
             gridPane.add(text, 0, i + 1);
         }
         return gridPane;
