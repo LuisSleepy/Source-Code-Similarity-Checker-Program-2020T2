@@ -1,40 +1,29 @@
 package softwareSimilarityChecker;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.scene.layout.*;
-import javafx.scene.image.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 public class mainController {
     private Stage stage;
     // Panes
-    public ScrollPane scrollPane;
     public AnchorPane mainMenuPane;
-    //public GridPane matrix;
-
     // Shapes
     public Circle circleGIF;
 
     // Containers
     public TextField folderTextField;
-    public Label scoreLabel = new Label();
 
     // Buttons
     public Button startButton;
@@ -83,18 +72,17 @@ public class mainController {
         stage.close();
     }
 
-    public void setSearchButton(ActionEvent actionEvent) {
+    public void setSearchButton() {
         Stage resourceStage = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         file = directoryChooser.showDialog(resourceStage);
         folderTextField.setText(file.toString());
-
         if (folderTextField.getText() != null) {
             continueButton.setDisable(false);
         }
     }
 
-    public void setContinueButton(ActionEvent actionEvent) {
+    public void setContinueButton() {
         folderTextField.setVisible(false);
         searchButton.setVisible(false);
         continueButton.setVisible(false);
@@ -105,7 +93,7 @@ public class mainController {
         backToSearchMenuButton.setVisible(true);
     }
 
-    public void setBackToMainMenuButton(ActionEvent actionEvent) {
+    public void setBackToMainMenuButton() {
         folderTextField.clear();
 
         folderTextField.setVisible(false);
@@ -118,7 +106,7 @@ public class mainController {
         exitButton.setVisible(true);
     }
 
-    public void setCheckerButton(ActionEvent actionEvent) throws IOException {
+    public void setCheckerButton() throws IOException {
         checkerButton.setVisible(false);
         metricsButton.setVisible(false);
         backToSearchMenuButton.setVisible(false);
@@ -129,18 +117,18 @@ public class mainController {
         matrixLoader.setLocation(getClass().getResource("MatrixUI.fxml"));
         Parent matrixRoot = matrixLoader.load();
         matrixController controller = matrixLoader.getController();
-        controller.setData(folderTextField, file);
+        controller.setData(folderTextField, file, matrixStage);
         Scene parentRoot = new Scene(matrixRoot);
-        matrixStage.setTitle("Similarity Matrix");
+        matrixStage.setTitle("Code Plagiarism Checker");
         matrixStage.setResizable(false);
         matrixStage.setScene(parentRoot);
         matrixStage.show();
     }
 
-    public void setMetricsButton(ActionEvent actionEvent) {
+    public void setMetricsButton() {
     }
 
-    public void setBackToSearchMenuButton(ActionEvent actionEvent) {
+    public void setBackToSearchMenuButton() {
         checkerButton.setVisible(false);
         metricsButton.setVisible(false);
         backToSearchMenuButton.setVisible(false);
@@ -152,24 +140,4 @@ public class mainController {
         continueButton.setDisable(true);
         backToMainMenuButton.setVisible(true);
     }
-
-    /*
-    public void showScore(MouseEvent mouseEvent) throws IllegalArgumentException {
-        System.out.println(GridPane.getColumnIndex(mouseEvent.getPickResult().getIntersectedNode()));
-        System.out.println(GridPane.getRowIndex(mouseEvent.getPickResult().getIntersectedNode()));
-        for (softwareSimilarityChecker.scoreChecker scoreChecker : scoreCheckers) {
-            scoreLabel.setText("");
-            if (GridPane.getColumnIndex(mouseEvent.getPickResult().getIntersectedNode()) == scoreChecker.column &&
-                    GridPane.getRowIndex(mouseEvent.getPickResult().getIntersectedNode()) == scoreChecker.row) {
-                String scoreString = String.format("%.2f", scoreChecker.score);
-                scoreLabel.setText(scoreString);
-                matrix.add(scoreLabel, scoreChecker.column, scoreChecker.row);
-                System.out.println(mouseEvent.getX());
-                System.out.println(mouseEvent.getY());
-                break;
-            }
-        }
-    }
-
-     */
 }

@@ -1,41 +1,96 @@
 package softwareSimilarityChecker;
 
-import javafx.event.ActionEvent;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.layout.*;
-import javafx.scene.control.ScrollPane;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 
 public class matrixController {
-    public TableView listOfFiles = new TableView();
-    public TextField folderTextField;
-    public Label projectTitle;
+    // For the table displaying the name of the files being compared
+    @FXML private TableView<nameOfFiles> filesTableView;
+    @FXML private TableColumn<nameOfFiles, String> filesTableColumn;
+    // For the table displaying the top 10 comparison with the highest scores
+    @FXML private TableView<highestScoresData> highestScoresDataTableView;
+    @FXML private TableColumn<highestScoresData, String> highestScoresDataTableColumn;
+    // For displaying the absolute path of the chosen folder while on the "Search" or "Continue" screen"
+    @FXML private TextField folderTextField;
+    // For displaying the absolute path of the chosen folder while on the matrix screen
+    @FXML private Label projectTitle;
+    // A button for going back to the main menu screen
+    // For the scroll pane displaying the GridPane of the matrix
+    @FXML private ScrollPane scrollPane;
+    // For displaying the matrix
+    @FXML private GridPane matrix;
+    // A container for the file (folder) chosen
+    @FXML private File file;
+    // For the entire stage of the matrix
+    @FXML private Stage matrixStage;
 
-    public Button homeButton;
+    // Container for the highest scores
+    private ArrayList<Float> highestScores = new ArrayList<>();
+    // Container for the two compared files in relation to the stored highest scores
+    private ArrayList<String> namesOfHighestScores = new ArrayList<>();
+    // Container for the names of the files inside the chosen folder
+    private String[] files;
 
-    public ScrollPane scrollPane;
-    public GridPane matrix;
+    // A method for the initializer of the table for the list of names of the files inside the chosen folder
+    private void setFilesTableView() {
+        filesTableColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        filesTableView.setItems(getFileNames(files));
+    }
 
-    public File file;
+    // A method for initializing the table displaying the top ten comparisons with the highest scores
+    private void setHighestScoresDataTableView() {
+        highestScoresDataTableColumn.setCellValueFactory(new PropertyValueFactory<>("nameAndScore"));
+        highestScoresDataTableView.setItems(getHighestScoresData(namesOfHighestScores));
+    }
 
-    public ArrayList<scoreChecker> scoreCheckers = new ArrayList<>();
+    // A method for creating the list of names of the files inside the chosen folder
+    public ObservableList<nameOfFiles> getFileNames(String[] names) {
+        ObservableList<nameOfFiles> fileNames = FXCollections.observableArrayList();
 
-    public void setData(TextField folderTextField, File file) {
+        // Traverses through all the names of the files
+        for (String name : names) {
+            fileNames.add(new nameOfFiles(name));
+        }
+        return fileNames;
+    }
+
+    // A method for creating the list of the top ten comparisons with the highest scores
+    private ObservableList<highestScoresData> getHighestScoresData(ArrayList<String> namesAndScores) {
+        ObservableList<highestScoresData> data = FXCollections.observableArrayList();
+
+        // Traverses through all the names of the highest comparisons with the corresponding scores
+        for (String namesAndScore : namesAndScores) {
+            data.add(new highestScoresData(namesAndScore));
+        }
+        return data;
+    }
+
+    public void setData(TextField folderTextField, File file, Stage matrixStage) {
         this.folderTextField = folderTextField;
         projectTitle.setText(folderTextField.getText());
         this.file = file;
+        this.matrixStage = matrixStage;
         checkOnAction();
-        setListOfFiles();
+        setFilesTableView();
+        setHighestScoresDataTableView();
     }
 
     private void checkOnAction() {
+        projectFileSearcher getF = new projectFileSearcher();
         if (file == null) {
             folderTextField.setText("No File Directory Chosen");
         } else {
@@ -43,52 +98,151 @@ public class matrixController {
             // Initializes the matrix
 
             // Stores the names of the files currently handled by "file"
-            String[] files = file.list();
+            files = file.list();
             assert files != null;
 
             matrix = gcm.gridPaneMaker(5, 5, files);
 
-            // Provides the dimensions of the array that will store the similarity scores
-            int rows = files.length;
-            int cols = files.length;
-            float[][] scores = new float[cols][rows];
-
             // Create a loop for reading the files
-            ArrayList<String> projFiles = new ArrayList<>();
-            for (String s : files) {
-                projFiles.add(file.getAbsolutePath() + '\\' + s);
-            }
-
+            ArrayList<File[]> projFiles = getF.projectFileSearcher(file);
+            int rows;
+            int cols;
+            float[][] scores;
             similarityChecker sc = new similarityChecker();
+            getFileInArray gFA = new getFileInArray();
+            float simScore, totalSimScore = 0, totalCount = 0;
+
             // Puts a file on hold and compare it to the rest of the files, also with itself
-            for (int x = 0; x < projFiles.size(); x++) {
-                for (int y = 0; y < projFiles.size(); y++) {
-                    String proj1 = projFiles.get(x);
-                    String proj2 = projFiles.get(y);
-                    File code1 = new File(proj1);
-                    File code2 = new File(proj2);
-                    try {
-                        float simScore = sc.check(code1, code2);
-                        System.out.print(String.format("%.2f", simScore) + "\t");
-                        scores[x][y] = simScore;
-                    } catch (IOException io) {
-                        io.printStackTrace();
+
+            // All Source Code in One Folder
+            if (projFiles.size() == 1) {
+                File[] proj1 = projFiles.get(0);
+                File[] proj2 = projFiles.get(0);
+                rows = proj1.length;
+                cols = proj2.length;
+                scores = new float[cols][rows];
+                for (int x = 0; x < proj1.length; x++) {
+                    for (int y = 0; y < proj2.length; y++) {
+                        File f1 = gFA.getFileInArray(proj1, x);
+                        File f2 = gFA.getFileInArray(proj2, y);
+                        try {
+                            simScore = sc.check(f1, f2);
+                            //System.out.print(String.format("%.2f", simScore) + "\t");
+                            scores[x][y] = simScore;
+
+                        } catch (IOException io) {
+                            io.printStackTrace();
+                        }
+                    }
+                    //System.out.print("\n");
+                }
+                // Instantiates gridColorMaker
+                for (int x = 0; x < proj1.length; x++) {
+                    for (int y = 0; y < proj2.length; y++) {
+                        // Creates a colored rectangle using the checkColor method of gridColorMaker
+                        StackPane coloredScore = gcm.checkColor(scores[x][y]);
+                        // Adds the rectangle in a to-be-created cell of the gridPane
+                        matrix.add(coloredScore, x + 1, y + 1);
+
+                        // for Top 10 highest scores
+                        if (x != y) {
+                            System.out.println(highestScores.size());
+                            if (highestScores.size() == 0) {
+                                highestScores.add(scores[x][y]);
+                                namesOfHighestScores.add(files[x] + " and " + files[y] + " : " + scores[x][y]);
+                            } else if (highestScores.size() < 10) {
+                                for (int i = 0; i < highestScores.size(); i++) {
+                                    if (Math.max(highestScores.get(i), scores[x][y]) == scores[x][y]) {
+                                        highestScores.add(i, scores[x][y]);
+                                        namesOfHighestScores.add(i, files[x] + " and " + files[y] + " : " + scores[x][y]);
+                                        break;
+                                    }
+                                }
+                            } else if (highestScores.size() == 10) {
+                                for (int i = 0; i < highestScores.size(); i++) {
+                                    if (Math.max(highestScores.get(i), scores[x][y]) == scores[x][y]) {
+                                        highestScores.remove(highestScores.get(i));
+                                        highestScores.add(i, scores[x][y]);
+                                        namesOfHighestScores.remove(namesOfHighestScores.get(i));
+                                        namesOfHighestScores.add(i, files[x] + " and " + files[y] + " : " + scores[x][y]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                System.out.print("\n");
             }
 
-            // Instantiates gridColorMaker
+            //By Folders
+            else {
+                rows = projFiles.size();
+                cols = projFiles.size();
+                scores = new float[cols][rows];
+                for (int x = 0; x < projFiles.size(); x++) {
+                    for (int y = 0; y < projFiles.size(); y++) {
+                        File[] proj1 = projFiles.get(x);
+                        File[] proj2 = projFiles.get(y);
+                        try {
+                            for (File f1 : proj1) {
+                                for (File f2 : proj2) {
+                                    if(x == y){
+                                        totalSimScore = 1;
+                                        totalCount = 1;
+                                    }else{
+                                        float simScore1 = sc.check(f1, f2);
+                                        float simScore2 = sc.check(f2, f1);
+                                        totalSimScore = totalSimScore +(simScore1+simScore2)/2;
+                                        totalCount++;
+                                    }
+                                }
+                            }
+                            float aveSimScore = totalSimScore / totalCount;
+                            //System.out.print(String.format("%.2f", aveSimScore) + "\t");
+                            scores[x][y] = scores[y][x]= aveSimScore;
+                        } catch (IOException io) {
+                            io.printStackTrace();
+                        }
+                    }
+                    //System.out.print("\n");
+                }
 
-            for (int x = 0; x < projFiles.size(); x++) {
-                for (int y = 0; y < projFiles.size(); y++) {
-                    // Creates a colored rectangle using the checkColor method of gridColorMaker
-                    StackPane coloredScore = gcm.checkColor(scores[x][y]);
-                    // Adds the rectangle in a to-be-created cell of the gridPane
-                    matrix.add(coloredScore, x + 1, y + 1);
-                    scoreChecker checker = new scoreChecker(scores[x][y], x + 1, y + 1);
-                    scoreCheckers.add(checker);
+                // Instantiates gridColorMaker
+                for (int x = 0; x < projFiles.size(); x++) {
+                    for (int y = 0; y < projFiles.size(); y++) {
+                        // Creates a colored rectangle using the checkColor method of gridColorMaker
+                        StackPane coloredScore = gcm.checkColor(scores[x][y]);
+                        // Adds the rectangle in a to-be-created cell of the gridPane
+                        matrix.add(coloredScore, x + 1, y + 1);
 
+                        // for Top 10 highest scores
+                        if (x != y) {
+                            System.out.println(highestScores.size());
+                            if (highestScores.size() == 0) {
+                                highestScores.add(scores[x][y]);
+                                namesOfHighestScores.add(files[x] + " and " + files[y] + " : " + scores[x][y]);
+                            } else if (highestScores.size() < 10) {
+                                for (int i = 0; i < highestScores.size(); i++) {
+                                    if (Math.max(highestScores.get(i), scores[x][y]) == scores[x][y]) {
+                                        highestScores.add(i, scores[x][y]);
+                                        namesOfHighestScores.add(i, files[x] + " and " + files[y] + " : " + scores[x][y]);
+                                        break;
+                                    }
+                                }
+                            } else if (highestScores.size() == 10) {
+                                for (int i = 0; i < highestScores.size(); i++) {
+                                    if (Math.max(highestScores.get(i), scores[x][y]) == scores[x][y]) {
+                                        highestScores.remove(highestScores.get(i));
+                                        highestScores.add(i, scores[x][y]);
+                                        namesOfHighestScores.remove(namesOfHighestScores.get(i));
+                                        namesOfHighestScores.add(i, files[x] + " and " + files[y] + " : " + scores[x][y]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        // For testing of top 10 highest scores
+                    }
                 }
             }
 
@@ -98,7 +252,19 @@ public class matrixController {
 
     }
 
-    private void setListOfFiles() {
+    public void setHomeButton() throws IOException {
+        matrixStage.close();
+        Stage mainStage = new Stage();
+        FXMLLoader mainLoader = new FXMLLoader();
+        mainLoader.setLocation(getClass().getResource("MainUI.fxml"));
+        Parent matrixRoot = mainLoader.load();
+        mainController controller = mainLoader.getController();
+        controller.initStage(mainStage);
+        Scene parentRoot = new Scene(matrixRoot);
+        mainStage.setTitle("Code Plagiarism Checker");
+        mainStage.setResizable(false);
+        mainStage.setScene(parentRoot);
+        mainStage.show();
 
     }
 }

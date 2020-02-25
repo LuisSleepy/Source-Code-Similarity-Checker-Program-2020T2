@@ -19,24 +19,23 @@
       </ScrollPane>
    </center>
    <right>
-      <TableView focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="filesTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn prefWidth="199.0" text="File Number" />
+          <TableColumn fx:id="filesTableColumn" prefWidth="199.0" text="FILE NUMBER" />
         </columns>
       </TableView>
    </right>
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView prefHeight="100.0" prefWidth="847.0">
+            <TableView fx:id="highestScoresDataTableView" focusTraversable="false" prefHeight="100.0" prefWidth="847.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="C1" />
-                <TableColumn prefWidth="75.0" text="C2" />
+                <TableColumn fx:id="highestScoresDataTableColumn" editable="false" prefWidth="599.0" text="TOP 10 HIGHEST SIMILARITY SCORE" />
               </columns>
             </TableView>
             <AnchorPane prefHeight="100.0" prefWidth="447.0">
                <children>
-                  <Button layoutX="50.0" layoutY="27.0" mnemonicParsing="false" text="HOME" underline="true">
+                  <Button focusTraversable="false" layoutX="50.0" layoutY="27.0" mnemonicParsing="false" onAction="#setHomeButton" text="HOME" underline="true">
                      <font>
                         <Font name="Cambria Bold" size="24.0" />
                      </font>
