@@ -12,9 +12,9 @@
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#76dfe4" height="565.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="465.0" />
       <Ellipse fill="#c4c4c4" layoutX="225.0" layoutY="101.0" radiusX="303.0" radiusY="183.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-      <Label alignment="CENTER" layoutX="96.0" layoutY="229.0" prefHeight="17.0" prefWidth="258.0" text="CLICK. WAIT. CHECK" textAlignment="CENTER">
+      <Label alignment="CENTER" layoutX="74.0" layoutY="229.0" prefHeight="29.0" prefWidth="317.0" text="Code Plagiarism Checker" textAlignment="CENTER">
          <font>
-            <Font name="icon-brand" size="24.0" />
+            <Font name="Rockwell Bold" size="24.0" />
          </font>
       </Label>
       <Circle fx:id="circleGIF" fill="WHITE" layoutX="225.0" layoutY="114.0" radius="100.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />

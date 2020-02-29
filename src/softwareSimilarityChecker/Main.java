@@ -10,11 +10,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getResource("MainUI.fxml"));
-        //primaryStage.setTitle("Code Plagiarism Checker");
-        //primaryStage.setScene(new Scene(root));
-        //primaryStage.setResizable(false);
-
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("MainUI.fxml"));
         Parent root = loader.load();

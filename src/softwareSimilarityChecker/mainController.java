@@ -76,9 +76,11 @@ public class mainController {
         Stage resourceStage = new Stage();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         file = directoryChooser.showDialog(resourceStage);
-        folderTextField.setText(file.toString());
-        if (folderTextField.getText() != null) {
+        if (file != null) {
+            folderTextField.setText(file.toString());
             continueButton.setDisable(false);
+        } else if (!folderTextField.getText().isEmpty()) {
+            file = new File(folderTextField.getText());
         }
     }
 
@@ -113,6 +115,7 @@ public class mainController {
 
         stage.close();
         Stage matrixStage = new Stage();
+        matrixStage.setMaximized(true);
         FXMLLoader matrixLoader = new FXMLLoader();
         matrixLoader.setLocation(getClass().getResource("MatrixUI.fxml"));
         Parent matrixRoot = matrixLoader.load();
@@ -125,7 +128,24 @@ public class mainController {
         matrixStage.show();
     }
 
-    public void setMetricsButton() {
+    public void setMetricsButton() throws IOException {
+        checkerButton.setVisible(false);
+        metricsButton.setVisible(false);
+        backToSearchMenuButton.setVisible(false);
+
+        stage.close();
+        Stage metricsStage = new Stage();
+        metricsStage.setMaximized(true);
+        FXMLLoader metricsLoader = new FXMLLoader();
+        metricsLoader.setLocation(getClass().getResource("MetricsUI.fxml"));
+        Parent metricsRoot = metricsLoader.load();
+        metricsController controller = metricsLoader.getController();
+        controller.setData(folderTextField, file, metricsStage);
+        Scene parentRoot = new Scene(metricsRoot);
+        metricsStage.setTitle("Code Plagiarism Checker");
+        metricsStage.setResizable(false);
+        metricsStage.setScene(parentRoot);
+        metricsStage.show();
     }
 
     public void setBackToSearchMenuButton() {

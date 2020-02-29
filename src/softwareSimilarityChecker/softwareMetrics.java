@@ -1,11 +1,17 @@
 package softwareSimilarityChecker;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-class SMetric {
+public class softwareMetrics {
+    private int programLength = 0, vocabularySize = 0;
+    private float programVolume = 0, difficulty = 0, programLevel = 0, effortToImplement = 0, timeToImplement = 0, deliveredBugs = 0;
+
     public static ArrayList<String> reorderVariables(ArrayList<String> variables) {
         int[] lengths = new int[variables.size()];
         for(int i=0;i<variables.size();i++)
@@ -30,8 +36,7 @@ class SMetric {
         }
         return variables;
     }
-    public static ArrayList<String> extractConstants(String line) // extract constants from string
-    {
+    public static ArrayList<String> extractConstants(String line) {
         boolean continueFlag = false;
         ArrayList<String> extracted = new ArrayList<String>();
         String temp = "";
@@ -55,8 +60,7 @@ class SMetric {
         }
         return extracted;
     }
-    public static Map<String,Integer> getUniqueCount(ArrayList<String> list)
-    {
+    public static Map<String,Integer> getUniqueCount(ArrayList<String> list) {
         Map<String,Integer> uniqueList = new HashMap<String,Integer>();
         for(int i=0;i<list.size();i++)
         {
@@ -74,45 +78,33 @@ class SMetric {
         }
         return uniqueList;
     }
-    public static void displayMetrics(int N1,int N2,int n1,int n2)
-    {
-        int N,n;
-        float V,D,L,E,T,B;
-
-        N = N1+N2;
-        n = n1+n2;
-        V = N * (float)( Math.log(n) / Math.log(2));
-        D = (n1/2)*(N2/n2);
-        L = 1/D;
-        E = V*D;
-        T = E/18;
-        B = (float)(Math.pow(E, 2/3)/3000);
-
-        System.out.println("\t[N] Program Length      : "+N);
-        System.out.println("\t[n] Vocabulary Size     : "+n);
-        System.out.println("\t[V] Program Volume      : "+V);
-        System.out.println("\t[D] Difficulty          : "+D);
-        System.out.println("\t[K] Program Level       : "+L);
-        System.out.println("\t[E] Effort to implement : "+E);
-        System.out.print("\t[T] Time to implement   : ");
-        System.out.format("%-10.5f%n", T);
-        System.out.print("\t[B] # of delivered bugs : ");
-        System.out.format("%-10.5f%n\n", B);
-
+    public void computeMetrics(int N1,int N2,int n1,int n2) {
+        programLength = N1 + N2;
+        vocabularySize = n1 + n2;
+        programVolume = programLength * (float)(Math.log(vocabularySize) / Math.log(2));
+        if (n2 == 0) {
+            difficulty = 0;
+            programLevel = 0;
+        } else {
+            difficulty = (n1 / 2) * (N2 / n2);
+            programLevel = 1 / difficulty;
+        }
+        effortToImplement = programVolume * difficulty;
+        timeToImplement = effortToImplement / 18;
+        deliveredBugs = programVolume / 3000;
     }
-    public static void main(String[] args)
-    {
+    public void getMetrics(File address) {
         try
         {
-            String[] keywords = { "scanf","printf","main","static" }; 	// datatypes shouldnt be added to keywords
-            String[] datatypes = { "int","float","double","char"};
+            String[] keywords = { "scanf","printf","main","static" }; 	// data types shouldn't be added to keywords
+            String[] dataTypes = { "int","float","double","char"};
             ArrayList<String> operators = new ArrayList<String>();
             ArrayList<String> operands = new ArrayList<String>();
             ArrayList<String> variables = new ArrayList<String>();
 
             int operatorCount = 0, operandCount = 0;
             boolean skipFlag = false;
-            BufferedReader reader = new BufferedReader(new FileReader(new File("C:\\Users\\Admin\\Desktop\\SubmissionFiles\\See.java")));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(String.valueOf(address))));
             String line;
 
             while((line = reader.readLine()) != null)
@@ -127,14 +119,14 @@ class SMetric {
                         operatorCount++;
                     }
                 }
-                for(String datatype : datatypes)
+                for(String dataType : dataTypes)
                 {
-                    if(line.startsWith(datatype))
+                    if(line.startsWith(dataType))
                     {
-                        operators.add(datatype);
+                        operators.add(dataType);
                         operatorCount++;
-                        int index = line.indexOf(datatype);
-                        line = line.substring(index+datatype.length(),line.length()-1);  // -1 to ignore the semicolon
+                        int index = line.indexOf(dataType);
+                        line = line.substring(index+dataType.length(),line.length()-1);  // -1 to ignore the semicolon
                         String[] vars = line.split(",");
                         for(String v : vars)
                         {
@@ -149,10 +141,11 @@ class SMetric {
                 {
                     if(line.charAt(i) >= 'A' && line.charAt(i) <= 'Z' || line.charAt(i) >= 'a' && line.charAt(i) <= 'z' || line.charAt(i) >= '0' && line.charAt(i) <= '9' || line.charAt(i) == ' ' || line.charAt(i) == ',' || line.charAt(i)==';' || line.charAt(i) == '(' || line.charAt(i) == '{')
                     {
+
                     }
                     else if(line.charAt(i) == ')'  )
                     {
-                        if(skipFlag == false)
+                        if(!skipFlag)
                         {
                             operatorCount++;
                             operators.add("()");
@@ -160,7 +153,7 @@ class SMetric {
                     }
                     else if(line.charAt(i) == '}'  )
                     {
-                        if(skipFlag == false)
+                        if(!skipFlag)
                         {
                             operatorCount++;
                             operators.add("{}");
@@ -207,29 +200,39 @@ class SMetric {
                 // checking for constants
                 operands.addAll(extractConstants(line));
             }
-            /*System.out.println("Operators identified : ");
-            for(String o : operators)
-                System.out.println("\t"+o);
-            System.out.println("Operands identified : ");
-            for(String o : operands)
-                System.out.println("\t"+o);
-            System.out.println("Variables identified : ");
-            for(String v : variables)
-                System.out.println("\t"+v);*/
-            System.out.println("Number of operators (N1) " + operators.size());
-            System.out.println("Number of operands  (N2) " + operands.size());
-
             Map<String,Integer> uniqueOperators = SMetric.getUniqueCount(operators);
             Map<String,Integer> uniqueOperands = SMetric.getUniqueCount(operands);
-            System.out.println("Number of unique operators (n1) "+uniqueOperators.size());
-            System.out.println("Number of unique operands (n2) "+uniqueOperands.size());
 
-            displayMetrics(operators.size(),operands.size(),uniqueOperators.size(),uniqueOperands.size());
+            computeMetrics(operators.size(),operands.size(),uniqueOperators.size(),uniqueOperands.size());
             reader.close();
         }
         catch(IOException ioe)
         {
             System.out.println(ioe);
         }
+    }
+    public int getProgramLength() {
+        return programLength;
+    }
+    public int getVocabularySize() {
+        return vocabularySize;
+    }
+    public float getProgramVolume() {
+        return programVolume;
+    }
+    public float getDifficulty() {
+        return difficulty;
+    }
+    public float getProgramLevel() {
+        return programLevel;
+    }
+    public float getEffortToImplement() {
+        return effortToImplement;
+    }
+    public float getTimeToImplement() {
+        return timeToImplement;
+    }
+    public float getDeliveredBugs() {
+        return deliveredBugs;
     }
 }

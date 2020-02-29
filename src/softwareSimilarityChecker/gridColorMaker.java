@@ -8,10 +8,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
+import java.util.ArrayList;
 
 public class gridColorMaker {
-    public GridPane gridPaneMaker(double vGap, double hGap, String[] names) {
+    public GridPane matrixGridPaneMaker(double vGap, double hGap, String[] names) {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(vGap);
         gridPane.setHgap(hGap);
@@ -32,7 +32,7 @@ public class gridColorMaker {
         return gridPane;
 
     }
-    public StackPane checkColor(float value) {
+    public StackPane matrixCheckColor(float value) {
         // Creates a rectangle with a specified width and height
         Rectangle scoreRectangle = new Rectangle();
         scoreRectangle.setWidth(50);
@@ -67,6 +67,68 @@ public class gridColorMaker {
         Text scoreText = new Text(scoreString);
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(scoreRectangle, scoreText);
+
+        return stackPane;
+    }
+    public GridPane metricsGridPaneMaker(double vGap, double hGap, String[] names) {
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(vGap);
+        gridPane.setHgap(hGap);
+
+        ArrayList<String> columnTitles = new ArrayList<>();
+        columnTitles.add("File Name");
+        columnTitles.add("Program Length");
+        columnTitles.add("Vocabulary Size");
+        columnTitles.add("Program Volume");
+        columnTitles.add("Difficulty");
+        columnTitles.add("Program Level");
+        columnTitles.add("Effort to Implement");
+        columnTitles.add("Time to Implement");
+        columnTitles.add("No. of Delivered Bugs");
+
+        for (int i = 0; i < columnTitles.size(); i++) {
+            Label text = new Label();
+            text.setText(columnTitles.get(i));
+            text.setFont(Font.font("Georgia", 12));
+            GridPane.setHalignment(text, HPos.CENTER);
+            gridPane.add(text, i, 0);
+        }
+
+        for (int i = 0; i < names.length; i++) {
+            Label text = new Label();
+            text.setText(names[i]);
+            text.setFont(Font.font("Georgia", 12));
+            GridPane.setHalignment(text, HPos.CENTER);
+            gridPane.add(text, 0, i + 1);
+        }
+
+        return gridPane;
+    }
+    public StackPane intMetricScoreMaker(int value) {
+        Rectangle rectangle = new Rectangle();
+        rectangle.setFill(Color.WHITE);
+        rectangle.setWidth(50);
+        rectangle.setHeight(25);
+
+        String intMetricScore = String.valueOf(value);
+        intMetricScore = intMetricScore.substring(0, Math.min(intMetricScore.length(), 4));
+        Text scoreText = new Text(intMetricScore);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(rectangle, scoreText);
+
+        return stackPane;
+    }
+    public StackPane floatMetricsScoreMaker(float value) {
+        Rectangle rectangle = new Rectangle();
+        rectangle.setFill(Color.WHITE);
+        rectangle.setWidth(50);
+        rectangle.setHeight(25);
+
+        String intMetricScore = String.valueOf(value);
+        intMetricScore = intMetricScore.substring(0, Math.min(intMetricScore.length(), 7));
+        Text scoreText = new Text(intMetricScore);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(rectangle, scoreText);
 
         return stackPane;
     }

@@ -2,6 +2,7 @@ package softwareSimilarityChecker;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -34,6 +36,7 @@ public class matrixController {
     // For displaying the matrix
     @FXML private GridPane matrix;
     // A container for the file (folder) chosen
+    @FXML private HBox bottomBox;
     @FXML private File file;
     // For the entire stage of the matrix
     @FXML private Stage matrixStage;
@@ -62,8 +65,8 @@ public class matrixController {
         ObservableList<nameOfFiles> fileNames = FXCollections.observableArrayList();
 
         // Traverses through all the names of the files
-        for (String name : names) {
-            fileNames.add(new nameOfFiles(name));
+        for (int i = 0; i < names.length; i++) {
+            fileNames.add(new nameOfFiles(i + 1, names[i]));
         }
         return fileNames;
     }
@@ -81,7 +84,7 @@ public class matrixController {
 
     public void setData(TextField folderTextField, File file, Stage matrixStage) {
         this.folderTextField = folderTextField;
-        projectTitle.setText(folderTextField.getText());
+        projectTitle.setText("Folder Name: " + folderTextField.getText());
         this.file = file;
         this.matrixStage = matrixStage;
         checkOnAction();
@@ -90,6 +93,8 @@ public class matrixController {
     }
 
     private void checkOnAction() {
+        //bottomBox.setMaxWidth(matrixStage.getMaxWidth());
+        //bottomBox.setMaxHeight(matrixStage.getMaxHeight());
         projectFileSearcher getF = new projectFileSearcher();
         if (file == null) {
             folderTextField.setText("No File Directory Chosen");
@@ -101,7 +106,7 @@ public class matrixController {
             files = file.list();
             assert files != null;
 
-            matrix = gcm.gridPaneMaker(5, 5, files);
+            matrix = gcm.matrixGridPaneMaker(5, 5, files);
 
             // Create a loop for reading the files
             ArrayList<File[]> projFiles = getF.projectFileSearcher(file);
@@ -140,7 +145,7 @@ public class matrixController {
                 for (int x = 0; x < proj1.length; x++) {
                     for (int y = 0; y < proj2.length; y++) {
                         // Creates a colored rectangle using the checkColor method of gridColorMaker
-                        StackPane coloredScore = gcm.checkColor(scores[x][y]);
+                        StackPane coloredScore = gcm.matrixCheckColor(scores[x][y]);
                         // Adds the rectangle in a to-be-created cell of the gridPane
                         matrix.add(coloredScore, x + 1, y + 1);
 
@@ -211,7 +216,7 @@ public class matrixController {
                 for (int x = 0; x < projFiles.size(); x++) {
                     for (int y = 0; y < projFiles.size(); y++) {
                         // Creates a colored rectangle using the checkColor method of gridColorMaker
-                        StackPane coloredScore = gcm.checkColor(scores[x][y]);
+                        StackPane coloredScore = gcm.matrixCheckColor(scores[x][y]);
                         // Adds the rectangle in a to-be-created cell of the gridPane
                         matrix.add(coloredScore, x + 1, y + 1);
 
@@ -266,5 +271,21 @@ public class matrixController {
         mainStage.setScene(parentRoot);
         mainStage.show();
 
+    }
+
+    public void setGoToMetricsButton(ActionEvent actionEvent) throws IOException {
+        matrixStage.close();
+        Stage metricsStage = new Stage();
+        FXMLLoader matrixLoader = new FXMLLoader();
+        matrixLoader.setLocation(getClass().getResource("MetricsUI.fxml"));
+        Parent metricsRoot = matrixLoader.load();
+        metricsController controller = matrixLoader.getController();
+        metricsStage.setMaximized(true);
+        controller.setData(folderTextField, file, metricsStage);
+        Scene parentRoot = new Scene(metricsRoot);
+        metricsStage.setTitle("Code Plagiarism Checker");
+        metricsStage.setResizable(false);
+        metricsStage.setScene(parentRoot);
+        metricsStage.show();
     }
 }
