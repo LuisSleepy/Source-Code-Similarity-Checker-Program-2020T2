@@ -9,24 +9,21 @@
     <top>
         <Label fx:id="projectTitle" focusTraversable="false" text="Label" BorderPane.alignment="CENTER">
          <font>
-            <Font name="Arial" size="12.0" />
+            <Font name="SansSerif Regular" size="12.0" />
          </font></Label>
     </top>
     <center>
-        <ScrollPane fx:id="scrollPane" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="scrollPane" focusTraversable="false" BorderPane.alignment="CENTER">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
             </content>
         </ScrollPane>
     </center>
    <left>
-        <TableView fx:id="highestScoresDataTableView" focusTraversable="false" BorderPane.alignment="CENTER">
+        <TableView fx:id="highestScoresDataTableView" focusTraversable="false" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="highestScoresDataTableColumn" prefWidth="249.0" text="TOP 10 HIGHEST SCORE" />
+                <TableColumn fx:id="highestScoresDataTableColumn" prefWidth="299.0" text="TOP 10 HIGHEST SCORES" />
             </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
         </TableView>
    </left>
    <right>

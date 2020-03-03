@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class gridColorMaker {
+    public ArrayList<String> columnTitles = new ArrayList<>();
     public GridPane matrixGridPaneMaker(double vGap, double hGap, String[] names) {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(vGap);
@@ -75,7 +76,6 @@ public class gridColorMaker {
         gridPane.setVgap(vGap);
         gridPane.setHgap(hGap);
 
-        ArrayList<String> columnTitles = new ArrayList<>();
         columnTitles.add("File Name");
         columnTitles.add("Program Length");
         columnTitles.add("Vocabulary Size");
@@ -90,6 +90,31 @@ public class gridColorMaker {
             Label text = new Label();
             text.setText(columnTitles.get(i));
             text.setFont(Font.font("Georgia", 12));
+            switch (i) {
+                case 1:
+                case 8:
+                    text.setTextFill(Color.rgb(120, 25, 0));
+                    break;
+                case 2:
+                    text.setTextFill(Color.rgb(80, 0, 72));
+                    break;
+                case 3:
+                    text.setTextFill(Color.rgb(39, 23, 105));
+                    break;
+                case 4:
+                    text.setTextFill(Color.rgb(0, 91, 94));
+                    break;
+                case 5:
+                    text.setTextFill(Color.rgb(0, 101, 24));
+                    break;
+                case 6:
+                    text.setTextFill(Color.rgb(137, 146, 0));
+                    break;
+                case 7:
+                    text.setTextFill(Color.rgb(138, 102, 2));
+                default:
+                    break;
+            }
             GridPane.setHalignment(text, HPos.CENTER);
             gridPane.add(text, i, 0);
         }
@@ -104,11 +129,14 @@ public class gridColorMaker {
 
         return gridPane;
     }
-    public StackPane intMetricScoreMaker(int value) {
+    public StackPane intMetricScoreMaker(int value, String metricScoreName) {
         Rectangle rectangle = new Rectangle();
-        rectangle.setFill(Color.WHITE);
+        metricScoreColor msc = new metricScoreColor();
+        System.out.println(msc.setRectangleColor(value, metricScoreName));
+        rectangle.setFill(msc.setRectangleColor(value, metricScoreName));
         rectangle.setWidth(50);
         rectangle.setHeight(25);
+
 
         String intMetricScore = String.valueOf(value);
         intMetricScore = intMetricScore.substring(0, Math.min(intMetricScore.length(), 4));
@@ -118,9 +146,10 @@ public class gridColorMaker {
 
         return stackPane;
     }
-    public StackPane floatMetricsScoreMaker(float value) {
+    public StackPane floatMetricsScoreMaker(float value, String metricScoreName) {
         Rectangle rectangle = new Rectangle();
-        rectangle.setFill(Color.WHITE);
+        metricScoreColor msc = new metricScoreColor();
+        rectangle.setFill(msc.setRectangleColor(value, metricScoreName));
         rectangle.setWidth(50);
         rectangle.setHeight(25);
 

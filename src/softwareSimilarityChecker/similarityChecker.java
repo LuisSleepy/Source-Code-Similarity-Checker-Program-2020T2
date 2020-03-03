@@ -43,9 +43,15 @@ public class similarityChecker {
             total = total +(sim - total);
         }
         float perc = (sim/total);
-        //System.out.println("The similarity percentage of two files is " + perc*100 + "%.");
         reader1.close();
         reader2.close();
+        return perc;
+    }
+
+    public float check(int x, int y, float perc) {
+        if(x==y){
+            return perc=1;
+        }
         return perc;
     }
 }

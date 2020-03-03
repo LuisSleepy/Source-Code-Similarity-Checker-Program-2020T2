@@ -10,8 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -58,6 +58,7 @@ public class matrixController {
     private void setHighestScoresDataTableView() {
         highestScoresDataTableColumn.setCellValueFactory(new PropertyValueFactory<>("nameAndScore"));
         highestScoresDataTableView.setItems(getHighestScoresData(namesOfHighestScores));
+        highestScoresDataTableView.setColumnResizePolicy(p -> true);
     }
 
     // A method for creating the list of names of the files inside the chosen folder
@@ -93,15 +94,12 @@ public class matrixController {
     }
 
     private void checkOnAction() {
-        //bottomBox.setMaxWidth(matrixStage.getMaxWidth());
-        //bottomBox.setMaxHeight(matrixStage.getMaxHeight());
         projectFileSearcher getF = new projectFileSearcher();
         if (file == null) {
             folderTextField.setText("No File Directory Chosen");
         } else {
             gridColorMaker gcm = new gridColorMaker();
             // Initializes the matrix
-
             // Stores the names of the files currently handled by "file"
             files = file.list();
             assert files != null;
@@ -113,6 +111,7 @@ public class matrixController {
             int rows;
             int cols;
             float[][] scores;
+            int scoresCounter = 0;
             similarityChecker sc = new similarityChecker();
             getFileInArray gFA = new getFileInArray();
             float simScore, totalSimScore = 0, totalCount = 0;
@@ -132,9 +131,8 @@ public class matrixController {
                         File f2 = gFA.getFileInArray(proj2, y);
                         try {
                             simScore = sc.check(f1, f2);
-                            //System.out.print(String.format("%.2f", simScore) + "\t");
                             scores[x][y] = simScore;
-
+                            scoresCounter++;
                         } catch (IOException io) {
                             io.printStackTrace();
                         }
@@ -148,10 +146,8 @@ public class matrixController {
                         StackPane coloredScore = gcm.matrixCheckColor(scores[x][y]);
                         // Adds the rectangle in a to-be-created cell of the gridPane
                         matrix.add(coloredScore, x + 1, y + 1);
-
                         // for Top 10 highest scores
                         if (x != y) {
-                            System.out.println(highestScores.size());
                             if (highestScores.size() == 0) {
                                 highestScores.add(scores[x][y]);
                                 namesOfHighestScores.add(files[x] + " and " + files[y] + " : " + scores[x][y]);
@@ -191,27 +187,23 @@ public class matrixController {
                         try {
                             for (File f1 : proj1) {
                                 for (File f2 : proj2) {
-                                    if(x == y){
-                                        totalSimScore = 1;
-                                        totalCount = 1;
-                                    }else{
-                                        float simScore1 = sc.check(f1, f2);
-                                        float simScore2 = sc.check(f2, f1);
-                                        totalSimScore = totalSimScore +(simScore1+simScore2)/2;
-                                        totalCount++;
-                                    }
+                                    float simScore1 = sc.check(f1, f2);
+                                    totalSimScore = totalSimScore +simScore1;
+                                    totalCount++;
                                 }
                             }
                             float aveSimScore = totalSimScore / totalCount;
-                            //System.out.print(String.format("%.2f", aveSimScore) + "\t");
-                            scores[x][y] = scores[y][x]= aveSimScore;
+                            aveSimScore = sc.check(x,y, aveSimScore);
+                            scores[x][y] = aveSimScore;
+                            totalSimScore=0;
+                            totalCount=0;
+                            scoresCounter = scoresCounter + 2;
                         } catch (IOException io) {
                             io.printStackTrace();
                         }
                     }
                     //System.out.print("\n");
                 }
-
                 // Instantiates gridColorMaker
                 for (int x = 0; x < projFiles.size(); x++) {
                     for (int y = 0; y < projFiles.size(); y++) {
@@ -222,7 +214,7 @@ public class matrixController {
 
                         // for Top 10 highest scores
                         if (x != y) {
-                            System.out.println(highestScores.size());
+                            //System.out.println(highestScores.size());
                             if (highestScores.size() == 0) {
                                 highestScores.add(scores[x][y]);
                                 namesOfHighestScores.add(files[x] + " and " + files[y] + " : " + scores[x][y]);
